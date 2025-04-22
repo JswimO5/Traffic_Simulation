@@ -1,6 +1,7 @@
 import random
 import enum
 from enum import Enum
+#TESTING NEEDED 
 
 #Further improvements: 
 #Car size, car speed max, current car speed
@@ -53,18 +54,19 @@ class Car:
         - roadFrom (entrance): The origin road where the car starts its journey.
         """
         self.roadFrom = entrance(roadFrom)
-
-        rand = random.randint(1, self.total)
-        if rand <= self.GRIFFITH_TO_HIGHWAY:
-            self.roadTo = entrance.griffith
-        elif rand <= self.GRIFFITH_TO_HIGHWAY + self.BEATY:
-            self.roadTo = entrance.beaty
-        elif rand <= self.GRIFFITH_TO_HIGHWAY + self.BEATY + self.MAIN_STREET_NORTH:
-            self.roadTo = entrance.main_north
-        elif rand <= self.GRIFFITH_TO_HIGHWAY + self.BEATY + self.MAIN_STREET_NORTH + self.MAIN_STREET_SOUTH:
-            self.roadTo = entrance.main_south
-        else:
-            self.roadTo = entrance.concord
+        
+        while self.roadTo is None or self.roadTo == self.roadFrom:
+            rand = random.randint(1, self.total)
+            if rand <= self.GRIFFITH_TO_HIGHWAY:
+                self.roadTo = entrance.griffith
+            elif rand <= self.GRIFFITH_TO_HIGHWAY + self.BEATY:
+                self.roadTo = entrance.beaty
+            elif rand <= self.GRIFFITH_TO_HIGHWAY + self.BEATY + self.MAIN_STREET_NORTH:
+                self.roadTo = entrance.main_north
+            elif rand <= self.GRIFFITH_TO_HIGHWAY + self.BEATY + self.MAIN_STREET_NORTH + self.MAIN_STREET_SOUTH:
+                self.roadTo = entrance.main_south
+            else:
+                self.roadTo = entrance.concord
 
     def get_road_from(self):
         """
