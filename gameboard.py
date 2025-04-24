@@ -91,11 +91,11 @@ class GameBoard:
 
 
     #Segment should:
-        #1. Make a car object randomly appear at entrance road arrays
-        #2. Make cars move along the roads
-        #3. Get rid of end of road cards
-        #4. Tell all intersections that a segment has passed
-        #5. Click forward time variable
+        #1. move exits 
+        #2. Collect intersection data on who can pass
+        #3. move cars through intersections 
+        #4. move cars along norm roads
+        #5. Get new cars in entrances
     def time_seg(self):
         for road in self.exits:
             self.get_rid(road)
