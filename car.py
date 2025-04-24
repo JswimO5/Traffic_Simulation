@@ -18,10 +18,9 @@ class entrance(Enum):
     Helps improve readability and avoid bugs related to string usage.
     """
     griffith = 1
-    beaty = 2
-    main_north = 3
-    main_south = 4
-    concord = 5
+    main_north = 2
+    main_south = 3
+    concord = 4
 
 
 class Car:
@@ -35,11 +34,10 @@ class Car:
     #Annual traffic to determine probability of car exits- will be changed in later versions
     #Change could be factoring that many people want to leave at the same time (rush hour)
     GRIFFITH_TO_HIGHWAY = 21000
-    BEATY = 6000
     MAIN_STREET_NORTH = 10000
     MAIN_STREET_SOUTH = 13500
     CONCORD = 14000
-    total = GRIFFITH_TO_HIGHWAY + BEATY + MAIN_STREET_NORTH + MAIN_STREET_SOUTH + CONCORD
+    total = GRIFFITH_TO_HIGHWAY + MAIN_STREET_NORTH + MAIN_STREET_SOUTH + CONCORD
 
     #These are enums, can explain later if you want. Could be super helpful in other situations
     #They are mostly used to make the code readable and avoid stupid bugs 
@@ -59,11 +57,9 @@ class Car:
             rand = random.randint(1, self.total)
             if rand <= self.GRIFFITH_TO_HIGHWAY:
                 self.roadTo = entrance.griffith
-            elif rand <= self.GRIFFITH_TO_HIGHWAY + self.BEATY:
-                self.roadTo = entrance.beaty
-            elif rand <= self.GRIFFITH_TO_HIGHWAY + self.BEATY + self.MAIN_STREET_NORTH:
+            elif rand <= self.GRIFFITH_TO_HIGHWAY + self.MAIN_STREET_NORTH:
                 self.roadTo = entrance.main_north
-            elif rand <= self.GRIFFITH_TO_HIGHWAY + self.BEATY + self.MAIN_STREET_NORTH + self.MAIN_STREET_SOUTH:
+            elif rand <= self.GRIFFITH_TO_HIGHWAY + self.MAIN_STREET_NORTH + self.MAIN_STREET_SOUTH:
                 self.roadTo = entrance.main_south
             else:
                 self.roadTo = entrance.concord
