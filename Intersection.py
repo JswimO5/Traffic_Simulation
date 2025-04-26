@@ -111,3 +111,56 @@ class intersection:
 
             
         
+class stop_light(intersection):
+    def __init__(self, exits, stop_lights):
+        """
+        Initializes the intersection with a list of roads.
+        Parameters:
+        - exits (list): A nested list of size 4 where exits are put in their repspective directions.
+        - directions are: 0 is North, 1 is East, 2 is South, and 3 is West.
+        - stop_lights (list): list of stop light sequences
+        - each sequence is [time,[from,to],[from,to]]
+        - times should be accumulative aka [[55...],[71...],[79...]] for concord
+        """
+        super().__init__(exits, [False]*4)  # Assume no stop signs;
+        self.stop_lights = stop_lights 
+
+    def give_permission(self, cars, roads_leaving, time):
+        """
+        Gives permission to the car to exit the intersection.
+        
+        Parameters:
+        - cars (list): A list of cars that are waiting to cross the intersection.
+        - roads_leaving (list): True or false if the road leaving the intersection is backed up.
+        - roads_leaving follows the same [N,E,S,W] as the stop_signs list.
+        - time: the current time being kept track of by the game board
+        """
+        right_turns = []
+        accepted = []
+        #figures out where in the light cycle you are
+        time_in_cycle = time % (self.stop_lights[len(self.stop_lights)-1][0])
+        for i in range(len(self.stop_lights)):
+            if time_in_cycle >= self.stop_lights[i][0]:
+                i -= 1
+                break
+        cycle = self.stop_lights[i]
+        #adds cars to respective priority
+        for car in cars:
+            entrance = self._find_direction(car.get_road_from())
+            exit = self._find_direction(car.get_road_to())
+            added = False
+            #check if the car has a green
+            for i in range(1,len(cycle)):
+                if cycle[i][0] == entrance and cycle[i][1] == exit:
+                    added = True
+                    if roads_leaving[exit] != True:
+                        accepted.append(car)
+                    break
+            #checks if the car is turning right and doesn't have green
+            if added == False:
+                if entrance == ((exit+1) % 4):
+                    right_turns.append(car)
+        #adds all cars trying to turn right that can
+        if len(right_turns) > 0:
+            accepted = self._permission_help(right_turns, accepted, roads_leaving)
+        return accepted
