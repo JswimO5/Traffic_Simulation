@@ -4,6 +4,8 @@ from enum import Enum
 import numpy
 import car 
 from car import Car
+from poisson import que
+
 
 class GameBoard:
     
@@ -32,8 +34,9 @@ class GameBoard:
     #Initialize intersections here
     norm_roads = []
 
+
     #Will be filled in when car lengths gotten
-    def __init__(self):
+    def __init__(self, max_time):
         self.main_north_north = numpy.zeros(0, dtype = Car)
         self.main_north_south = numpy.zeros(0, dtype = Car)
         self.beat_north = numpy.zeros(0, dtype = Car)
@@ -63,7 +66,14 @@ class GameBoard:
         entrance_intersections = []
         #Possions
         #Create Poissons for each entrance, include timer, Poission info, and queue of cars
+        #Need arrival times here
+        a1, a2, a3, a4 = 0,0,0,0
         poosons = []
+        poosons.append(que(a1, max_time))
+        poosons.append(que(a2, max_time))
+        poosons.append(que(a3, max_time))
+        poosons.append(que(a4, max_time))
+        
 
 
         #Make real lists here
@@ -71,6 +81,7 @@ class GameBoard:
             self.norm_roads.append(self.rest[i], norm_intersections[i])
         for i in range(len(self.entrances)-1):
             self.norm_roads.append(self.entrances[i], entrance_intersections[i], poosons[i])
+       
 
 
     def get_rid(exit):
@@ -100,7 +111,16 @@ class GameBoard:
         for road in self.exits:
             self.get_rid(road)
             self.move_cars(road)
+        #Do intersections here
+        #move intersections here
+        for road in self.norm_roads: #This moves cars in normal roads and then entrances
+            self.move_cars(road[0])
+        for road in self.entrances:
+            coar = road[2].collect()
+            if(coar != None):
+                road[len(road)-1] = coar
 
+            
 
         return 0
 
