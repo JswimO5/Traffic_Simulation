@@ -33,7 +33,7 @@ class Car:
     """
     #Annual traffic to determine probability of car exits- will be changed in later versions
     #Change could be factoring that many people want to leave at the same time (rush hour)
-    GRIFFITH_TO_HIGHWAY = 21000
+    GRIFFITH_TO_HIGHWAY = 17000
     MAIN_STREET_NORTH = 10000
     MAIN_STREET_SOUTH = 13500
     CONCORD = 14000

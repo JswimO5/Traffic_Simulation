@@ -52,8 +52,8 @@ class GameBoard:
         griff_beat_main_west = numpy.zeros(88, dtype = Car)
         main_griff_concord_north = numpy.zeros(51, dtype = Car)
         main_griff_concord_south = numpy.zeros(51, dtype = Car)
-        concord_east = numpy.zeros(400, dtype = Car) #This is an unwittingly long number because there do always be traffic here
-        concord_west = numpy.zeros(400, dtype = Car)
+        concord_east = numpy.zeros(50, dtype = Car) #This is an arbitrary number, if there is a better idea, I would love to hear it
+        concord_west = numpy.zeros(50, dtype = Car)
         main_concord_blake_north= numpy.zeros(25, dtype = Car)
         main_concord_blake_south= numpy.zeros(25, dtype = Car)
         main_south_north = numpy.zeros(293, dtype = Car) #Will need to be changed to add potts intersection
@@ -223,4 +223,26 @@ class GameBoard:
         return commutes
 
             
+    def print_all(self):
+        print("Exits: ")
+        for road in self.exits:
+            cars_at = []
+            for i in range(len(road)):
+                if road[i] is not None:
+                    cars_at.append(i)
+            print(cars_at)
+        print("Rest of roads: ")
+        for road, queue in self.entrances:
+            cars_at = []
+            for i in range(len(road)):
+                if road[i] is not None:
+                    cars_at.append(i)
+            print(cars_at)
+        for road in self.rest:
+            cars_at = []
+            for i in range(len(road)):
+                if road[i] is not None:
+                    cars_at.append(i)
+            print(cars_at)
+
  
