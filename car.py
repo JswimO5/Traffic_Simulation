@@ -43,15 +43,18 @@ class Car:
     #They are mostly used to make the code readable and avoid stupid bugs 
     roadFrom = None
     roadTo = None
+    spawn = None
 
-    def __init__(self, roadFrom):
+    def __init__(self, roadFrom, time):
         """
         Initializes a new car object with a random destination based on traffic distribution.
 
         Parameters:
         - roadFrom (entrance): The origin road where the car starts its journey.
+        - time: The current time in the simulation when the car is being spawned.
         """
         self.roadFrom = entrance(roadFrom)
+        self.spawn = time
         
         while self.roadTo is None or self.roadTo == self.roadFrom:
             rand = random.randint(1, self.total)
@@ -81,3 +84,12 @@ class Car:
         - entrance: The road the car is heading to.
         """
         return self.roadTo.value
+    
+    def get_spawn_time(self):
+        """
+        Retrieves the spawn time of the car.
+
+        Returns:
+        - spawn: The time the car spawned at.
+        """
+        return self.spawn

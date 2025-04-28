@@ -114,7 +114,7 @@ class GameBoard:
        
 
 
-    def get_rid(self, exit_road):
+    def get_rid(self, exit_road, time):
         """
         Removes a car from the end of an exit road, simulating that it has left the system.
 
@@ -123,11 +123,15 @@ class GameBoard:
 
         Returns:
         - numpy array: The updated road after removal.
+        - the commute time of the car that left. If no car leaves, commute equals zero.
         """
         last_idx = len(exit_road) - 1
+        commute = 0
         if exit_road[last_idx] is not None:
+            #calulate commute
+            commute = time - exit_road[last_idx].get_spawn_time()
             exit_road[last_idx] = None
-        return exit_road
+        return [exit_road, commute]
     
     def move_cars(self, road):
         """
@@ -182,11 +186,15 @@ class GameBoard:
         4. Introducing new cars from entrance queues
 
         Returns:
-        - Nothing
+        - an array of the commute times for the cars exiting on that cycle
         """
+        commutes = []
         for road in self.exits: #This gets rid of cars at exits and moves exit roads forward
-            self.get_rid(road)
-            self.move_cars(road)
+            data = self.get_rid(road, time)
+            road = data[0]
+            if data[1] != 0:
+                commutes.append(data[1])
+            road = self.move_cars(road)
 
         #for every intersection; gets list of cars that can move, moves those cars to the next array
         for intersect, exits, enters in range(self.intersections): #This checks what can move and moves them
@@ -203,15 +211,16 @@ class GameBoard:
 
         #This moves cars in normal roads and then entrances
         for road in self.norm_roads: 
-            self.move_cars(road)
+            road = self.move_cars(road)
 
         #Make new cars and increment timer on queues for new cars
         for entrance_road, queue in self.entrances: #This makes new cars 
-            coar = queue.collect()
+            coar = queue.collect(time)
             if(coar != None):
                 if self._road_packed(entrance_road):
                     queue.car_increment(coar)
                 entrance_road[0] = coar
+        return commutes
 
             
  

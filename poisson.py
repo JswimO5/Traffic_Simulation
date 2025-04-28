@@ -43,10 +43,13 @@ class Que:
 
 
 
-    def collect(self):
+    def collect(self, time):
         """
         Decrements the timer and returns a new Car when the timer hits 0.
 
+        Parameters:
+        - Time: The current time in the simulation.
+        
         Returns:
         - Car: A new Car object if it's time for one to arrive.
         - None: If it's not yet time for a new car.
@@ -59,8 +62,8 @@ class Que:
                 self.timer = self.queue.popleft()
                 self.timer = self.timer-1
                 if not full:
-                    return Car(self.road_from)
-                self.car_queue.append(Car(self.road_from))
+                    return Car(self.road_from, time)
+                self.car_queue.append(Car(self.road_from, time))
         else:
             self.timer = self.timer-1
         if full:
