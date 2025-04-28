@@ -69,6 +69,10 @@ class intersection:
                     accepted.append(car)
         return accepted
 
+    def get_exits(self):
+        return self.exit_locations
+
+
     
     def give_permission(self, cars, roads_leaving):
         """

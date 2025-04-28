@@ -4,92 +4,141 @@ from enum import Enum
 import numpy
 import car 
 from car import Car
-from poisson import que
-
+from poisson import Que
+import Intersection
 
 class GameBoard:
-    
+    """
+    Represents the main simulation board containing all roads, entrances, exits, 
+    and the core logic for simulating traffic over time.
+
+    Attributes:
+    - Road segments (numpy arrays): Each road holds a series of car objects or empty slots.
+    - entrances (list): Entrances to the road network where cars can spawn.
+    - exits (list): Exits from the road network where cars leave.
+    - rest (list): Internal road segments used for movement between intersections.
+    - norm_roads (list): Combination of all roads, linked with intersections and Poisson queues.
+    """
 
 
-    main_north_north = None
-    main_north_south = None
-    beat_north = None
-    beat_south = None
-    main_griff_beat_north = None
-    main_griff_beat_south = None
-    griff_east_east = None
-    griff_east_west = None
-    griff_beat_main_east = None
-    griff_beat_main_west = None
-    main_griff_concord_north = None
-    main_griff_concord_south = None
-    concord_east = None
-    concord_west = None
-    main_south_north = None
-    main_south_south = None
-
+    #Initialize global arrays
     exits = []
     entrances = []
     rest = []
-    #Initialize intersections here
+    intersections = []
     norm_roads = []
 
 
     #Will be filled in when car lengths gotten
-    def __init__(self, max_time):
-        self.main_north_north = numpy.zeros(0, dtype = Car)
-        self.main_north_south = numpy.zeros(0, dtype = Car)
-        self.beat_north = numpy.zeros(0, dtype = Car)
-        self.beat_south = numpy.zeros(0, dtype = Car)
-        self.main_griff_beat_north = numpy.zeros(0, dtype = Car)
-        self.main_griff_beat_south = numpy.zeros(0, dtype = Car)
-        self.griff_east_east = numpy.zeros(0, dtype = Car)
-        self.griff_east_west = numpy.zeros(0, dtype = Car)
-        self.griff_beat_main_east = numpy.zeros(0, dtype = Car)
-        self.griff_beat_main_west = numpy.zeros(0, dtype = Car)
-        self.main_griff_concord_north = numpy.zeros(0, dtype = Car)
-        self.main_griff_concord_south = numpy.zeros(0, dtype = Car)
-        self.concord_east = numpy.zeros(0, dtype = Car)
-        self.concord_west = numpy.zeros(0, dtype = Car)
-        self.main_south_north = numpy.zeros(0, dtype = Car)
-        self.main_south_south = numpy.zeros(0, dtype = Car)
+    def __init__(self, max_time, ):
+        """
+        Initializes all road arrays, entrance/exit lists, Poisson queues, 
+        and links roads to intersections.
 
-        self.entrances = [self.main_north_south, self.griff_east_west, self.concord_east, self.main_south_north]
-        self.exits = [self.main_north_north, self.griff_east_east, self.concord_west, self.main_south_south]
+        Parameters:
+        - max_time (int): The total time for which the simulation runs.
+        """
+
+        #List all roads with num of cars that that they can have
+        main_north_north = numpy.zeros(30, dtype = Car)
+        main_north_south = numpy.zeros(30, dtype = Car)
+        beat_north = numpy.zeros(264, dtype = Car)
+        beat_south = numpy.zeros(264, dtype = Car)
+        main_griff_beat_north = numpy.zeros(178, dtype = Car)
+        main_griff_beat_south = numpy.zeros(178, dtype = Car)
+        griff_west_east = numpy.zeros(147, dtype = Car)
+        griff_west_west = numpy.zeros(147, dtype = Car)
+        griff_beat_main_east = numpy.zeros(88, dtype = Car)
+        griff_beat_main_west = numpy.zeros(88, dtype = Car)
+        main_griff_concord_north = numpy.zeros(51, dtype = Car)
+        main_griff_concord_south = numpy.zeros(51, dtype = Car)
+        concord_east = numpy.zeros(400, dtype = Car) #This is an unwittingly long number because there do always be traffic here
+        concord_west = numpy.zeros(400, dtype = Car)
+        main_concord_blake_north= numpy.zeros(25, dtype = Car)
+        main_concord_blake_south= numpy.zeros(25, dtype = Car)
+        main_south_north = numpy.zeros(293, dtype = Car) #Will need to be changed to add potts intersection
+        main_south_south = numpy.zeros(293, dtype = Car)
+
+        #Groups the roads based on exit, entrance, and rest
+        entrances_roads = [main_north_south, griff_west_west, concord_east, main_south_north]
+        self.exits = [main_north_north, griff_west_east, concord_west, main_south_south]
         #Needs to be made so that they are in a good and fun order
-        self.rest = [self.beat_north, self.beat_south, self.main_griff_beat_north, self.main_griff_beat_south,
-                 self.griff_beat_main_east, self.griff_beat_main_west, self.main_griff_concord_north, 
-                 self.main_griff_concord_south]
+        self.rest = [beat_north, beat_south, main_griff_beat_north, main_griff_beat_south,
+                 griff_beat_main_east, griff_beat_main_west, main_griff_concord_north, 
+                 main_griff_concord_south, main_concord_blake_north, main_concord_blake_south]
         
-        #Make the intersections here:
-        norm_intersections = [] #Some of these should be duplicated, line up correctly with roads
-        entrance_intersections = []
-        #Possions
+       
+        #make the intersections and gets em together
+        beaty_main = Intersection.intersection([[2], None, [3,4], [1]], [False, False, False, True])
+        #needs be changed to add sloan
+        beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1]], [8,  [7, 0]], [8, [3, 0]]])
+        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0]], [21, [4, 0]], [8, [3, 4]]])
+        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2]], [16, [1, 0], [1, 2],], [8, [0,1], [0,2]]])
+        #This one was kinda confusing, up in the air how we model tbh
+        #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
+        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[45, [0,2], [2,0]], [30, [7, 0]]])
+        #Add intesection here for potts (currently stopsign)
+        #This can be changed to make cars go more efficiently or whatver
+        norm_intersections = [beaty_main, beaty_griffith, griffith_main, concord_main, main_main] 
+
+
+        #Create the queue and poissons for each entrance
         #Create Poissons for each entrance, include timer, Poission info, and queue of cars
         #Need arrival times here
         a1, a2, a3, a4 = 0,0,0,0
         poosons = []
-        poosons.append(que(a1, max_time))
-        poosons.append(que(a2, max_time))
-        poosons.append(que(a3, max_time))
-        poosons.append(que(a4, max_time))
+        poosons.append(Que(a1, max_time, 2))
+        poosons.append(Que(a2, max_time, 1))
+        poosons.append(Que(a3, max_time, 4))
+        poosons.append(Que(a4, max_time, 3))
         
+        #groups the roads based on intersections 
+        bm_int_info = [[main_north_north, None, main_griff_beat_south, beat_south],[main_north_south, None, main_griff_beat_north, beat_north]]
+        bg_int_info = [[beat_north, griff_beat_main_east, None, griff_west_west],[beat_south, griff_beat_main_west, None, griff_west_east]]
+        gm_int_info = [[main_griff_beat_north, None, main_griff_concord_south, griff_beat_main_west],[main_griff_beat_south, None, main_griff_concord_north, griff_beat_main_east]]
+        mc_int_info = [[main_griff_concord_north, concord_east, main_concord_blake_south, None],[main_griff_concord_south, concord_west, main_concord_blake_north, None]]
+        mm_int_info = [[main_concord_blake_north, None, main_south_south, None],[main_concord_blake_south, None, main_south_north, None]]
+        int_roaders = [bm_int_info, bg_int_info, gm_int_info, mc_int_info, mm_int_info]
 
 
-        #Make real lists here
-        for i in range(len(self.rest)-1):
-            self.norm_roads.append(self.rest[i], norm_intersections[i])
-        for i in range(len(self.entrances)-1):
-            self.norm_roads.append(self.entrances[i], entrance_intersections[i], poosons[i])
+        #Makes lists needed for turn incrementing
+        for i in range(len(norm_intersections)):
+            self.intesections.append(norm_intersections[i], int_roaders[i][0], int_roaders[i][1]) #This should have a list of an intesection @0 and roads coming out (NESW) @1 roads going in (NESW)
+        for i in range(len(self.rest)):
+            self.norm_roads.append(self.rest[i])
+        for i in range(len(self.entrances)):
+            self.norm_roads.append(entrances_roads)
+        for i in range(len(self.entrances)):
+            self.entrances.append([entrances_roads[i], poosons[i]])
+        
        
 
 
-    def get_rid(exit):
-        if exit[len(exit-1)] is not None:
-            exit[len(exit-1)] = None
-        return exit
+    def get_rid(self, exit_road):
+        """
+        Removes a car from the end of an exit road, simulating that it has left the system.
+
+        Parameters:
+        - exit (numpy array): The road from which to remove the car.
+
+        Returns:
+        - numpy array: The updated road after removal.
+        """
+        last_idx = len(exit_road) - 1
+        if exit_road[last_idx] is not None:
+            exit_road[last_idx] = None
+        return exit_road
     
-    def move_cars(road):
+    def move_cars(self, road):
+        """
+        Moves cars forward along a given road segment if the next position is empty.
+
+        Parameters:
+        - road (numpy array): The road segment where car movement is simulated.
+
+        Returns:
+        - numpy array: The updated road with moved cars.
+        """
         for i in range(len(road)-2, -1, -1):
             if road[i] is not None:
                 if road[i+1] is not None:
@@ -99,30 +148,70 @@ class GameBoard:
                     road[i] = None
         return road
 
+    def _road_packed(self, road):
+        if road[0] is None:
+            return False
+        else:
+            return True
+
+    #This can probably be crazy performance improved
+    def _move_intersections(self, intersect, accepted, exits, entrances):
+        exit_goes = intersect.get_exits()   
+        for coar in accepted:
+            #removes car from entrance roads
+            for entrance in entrances:
+                if coar in entrances:
+                    entrance[len(entrance-1)] = None
+            #Finds the road its going to and checks with intersection to see where it needs to go
+            road_to = coar.get_road_to()
+            for i in range(len(exit_goes)):
+                if road_to in exit_goes[i]:
+                    exits[i][0] = coar
 
 
-    #Segment should:
-        #1. move exits 
-        #2. Collect intersection data on who can pass
-        #3. move cars through intersections 
-        #4. move cars along norm roads
-        #5. Get new cars in entrances
-    def time_seg(self):
-        for road in self.exits:
+
+
+    def time_seg(self, time):
+        """
+        Advances the simulation by one time segment.
+
+        Operations include:
+        1. Removing cars from exits
+        2. Moving cars within roads
+        3. Managing intersections (placeholder)
+        4. Introducing new cars from entrance queues
+
+        Returns:
+        - Nothing
+        """
+        for road in self.exits: #This gets rid of cars at exits and moves exit roads forward
             self.get_rid(road)
             self.move_cars(road)
-        #Do intersections here
-        #move intersections here
-        for road in self.norm_roads: #This moves cars in normal roads and then entrances
-            self.move_cars(road[0])
-        for road in self.entrances:
-            coar = road[2].collect()
+
+        #for every intersection; gets list of cars that can move, moves those cars to the next array
+        for intersect, exits, enters in range(self.intersections): #This checks what can move and moves them
+            north, east, south, west = self.road_packed(exits[0]), self.road_packed(exits[1]), self.road_packed(exits[2]), self.road_packed(exits[3])
+            #may need to change cars to get the road currently on?
+            coars = []
+            for road in enters:
+                coars.append(road[len(road)-1])
+            if isinstance(intersect, Intersection.stop_light):
+                accepted = intersect.give_permission(coars, [north, east, south, west], time)
+            else:
+                accepted = intersect.give_permission(coars, [north, east, south, west])
+            self._move_intersections(intersect, accepted, exits, enters)
+
+        #This moves cars in normal roads and then entrances
+        for road in self.norm_roads: 
+            self.move_cars(road)
+
+        #Make new cars and increment timer on queues for new cars
+        for entrance_road, queue in self.entrances: #This makes new cars 
+            coar = queue.collect()
             if(coar != None):
-                road[len(road)-1] = coar
+                if self._road_packed(entrance_road):
+                    queue.car_increment(coar)
+                entrance_road[0] = coar
 
             
-
-        return 0
-
-
-    
+ 

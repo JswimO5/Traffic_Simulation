@@ -71,7 +71,7 @@ class Car:
         Returns:
         - entrance: The road the car started from.
         """
-        return self.roadFrom
+        return self.roadFrom.value
     
     def get_road_to(self):
         """
@@ -80,4 +80,4 @@ class Car:
         Returns:
         - entrance: The road the car is heading to.
         """
-        return self.roadTo
+        return self.roadTo.value
