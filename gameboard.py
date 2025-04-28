@@ -224,6 +224,7 @@ class GameBoard:
 
             
     def print_all(self):
+        print("Each array shows where cars are in that array. Consult constructor to find order of roads")
         print("Exits: ")
         for road in self.exits:
             cars_at = []
@@ -231,13 +232,14 @@ class GameBoard:
                 if road[i] is not None:
                     cars_at.append(i)
             print(cars_at)
-        print("Rest of roads: ")
+        print("Entrances: ")
         for road, queue in self.entrances:
             cars_at = []
             for i in range(len(road)):
                 if road[i] is not None:
                     cars_at.append(i)
             print(cars_at)
+        print("Rest of roads: ")
         for road in self.rest:
             cars_at = []
             for i in range(len(road)):
