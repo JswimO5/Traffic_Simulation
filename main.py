@@ -8,10 +8,14 @@ def main():
     num_cars = 0
     while time < hour:
         commutes = board.time_seg(time)
-        if(len(commutes>0)):
+        if(len(commutes)>0):
             for i in range(len(commutes)):
                 sum += commutes[i]
                 num_cars += 1
+        if time%10 == 0:
+            board.print_all()
         time += 1
     average_commute = sum/num_cars
     print("The average commute time is " + average_commute + "\n")
+
+main()
