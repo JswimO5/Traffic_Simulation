@@ -30,7 +30,7 @@ class GameBoard:
 
 
     #Will be filled in when car lengths gotten
-    def __init__(self, max_time, ):
+    def __init__(self, max_time):
         """
         Initializes all road arrays, entrance/exit lists, Poisson queues, 
         and links roads to intersections.
@@ -40,24 +40,24 @@ class GameBoard:
         """
 
         #List all roads with num of cars that that they can have
-        main_north_north = numpy.zeros(30, dtype = Car)
-        main_north_south = numpy.zeros(30, dtype = Car)
-        beat_north = numpy.zeros(264, dtype = Car)
-        beat_south = numpy.zeros(264, dtype = Car)
-        main_griff_beat_north = numpy.zeros(178, dtype = Car)
-        main_griff_beat_south = numpy.zeros(178, dtype = Car)
-        griff_west_east = numpy.zeros(147, dtype = Car)
-        griff_west_west = numpy.zeros(147, dtype = Car)
-        griff_beat_main_east = numpy.zeros(88, dtype = Car)
-        griff_beat_main_west = numpy.zeros(88, dtype = Car)
-        main_griff_concord_north = numpy.zeros(51, dtype = Car)
-        main_griff_concord_south = numpy.zeros(51, dtype = Car)
-        concord_east = numpy.zeros(50, dtype = Car) #This is an arbitrary number, if there is a better idea, I would love to hear it
-        concord_west = numpy.zeros(50, dtype = Car)
-        main_concord_blake_north= numpy.zeros(25, dtype = Car)
-        main_concord_blake_south= numpy.zeros(25, dtype = Car)
-        main_south_north = numpy.zeros(293, dtype = Car) #Will need to be changed to add potts intersection
-        main_south_south = numpy.zeros(293, dtype = Car)
+        main_north_north = [None] *30
+        main_north_south = [None] *30
+        beat_north = [None] *264
+        beat_south = [None] *264
+        main_griff_beat_north = [None] *178
+        main_griff_beat_south = [None] *178
+        griff_west_east = [None] *147
+        griff_west_west = [None] *147
+        griff_beat_main_east = [None] *88
+        griff_beat_main_west = [None] *88
+        main_griff_concord_north = [None] *51
+        main_griff_concord_south = [None] *51
+        concord_east = [None] *50 #This is an arbitrary number, if there is a better idea, I would love to hear it
+        concord_west = [None] *50
+        main_concord_blake_north= [None] *25
+        main_concord_blake_south= [None] *25
+        main_south_north = [None] *293 #Will need to be changed to add potts intersection
+        main_south_south = [None] *293
 
         #Groups the roads based on exit, entrance, and rest
         entrances_roads = [main_north_south, griff_west_west, concord_east, main_south_north]
@@ -73,10 +73,11 @@ class GameBoard:
         #needs be changed to add sloan
         beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1]], [8,  [7, 0]], [8, [3, 0]]])
         griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0]], [21, [4, 0]], [8, [3, 4]]])
+        #need left turning
         concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2]], [16, [1, 0], [1, 2],], [8, [0,1], [0,2]]])
         #This one was kinda confusing, up in the air how we model tbh
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
-        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[45, [0,2], [2,0]], [30, [7, 0]]])
+        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[45, [0,2], [2,0]], [20, [7, 0]]])
         #Add intesection here for potts (currently stopsign)
         #This can be changed to make cars go more efficiently or whatver
         norm_intersections = [beaty_main, beaty_griffith, griffith_main, concord_main, main_main] 
@@ -103,7 +104,7 @@ class GameBoard:
 
         #Makes lists needed for turn incrementing
         for i in range(len(norm_intersections)):
-            self.intesections.append(norm_intersections[i], int_roaders[i][0], int_roaders[i][1]) #This should have a list of an intesection @0 and roads coming out (NESW) @1 roads going in (NESW)
+            self.intersections.append([norm_intersections[i], int_roaders[i][0], int_roaders[i][1]]) #This should have a list of an intesection @0 and roads coming out (NESW) @1 roads going in (NESW)
         for i in range(len(self.rest)):
             self.norm_roads.append(self.rest[i])
         for i in range(len(self.entrances)):

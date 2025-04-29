@@ -71,8 +71,6 @@ class intersection:
 
     def get_exits(self):
         return self.exit_locations
-
-
     
     def give_permission(self, cars, roads_leaving):
         """

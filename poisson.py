@@ -33,15 +33,13 @@ class Que:
         neg_sec = -1/arr_p_sec
 
         while(current_time<max_time):
-            r = numpy.random() #could be random.random()
+            r = numpy.random.random() #could be random.random()
             time = neg_sec*numpy.log(r)
             current_time += time
             self.queue.append(time)
 
     def car_increment(self, car):
         self.car_queue.append(car)
-
-
 
     def collect(self, time):
         """
