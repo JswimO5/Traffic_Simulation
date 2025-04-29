@@ -87,6 +87,7 @@ class intersection:
         last_priority = []
         accepted = []
         for car in cars:
+            #This breaks if there is nothing in cars
             i = self._find_direction(car.get_road_from())
             if self.stop_signs[i] == True:
                 if self.last_cycle[i] == True:

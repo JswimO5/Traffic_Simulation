@@ -1,8 +1,6 @@
 import random
-import enum
 from enum import Enum
 import numpy
-import car 
 from car import Car
 from poisson import Que
 import Intersection
@@ -86,7 +84,7 @@ class GameBoard:
         #Create the queue and poissons for each entrance
         #Create Poissons for each entrance, include timer, Poission info, and queue of cars
         #Need arrival times here
-        a1, a2, a3, a4 = 0,0,0,0
+        a1, a2, a3, a4 = .01,.01,.01,.01
         poosons = []
         poosons.append(Que(a1, max_time, 2))
         poosons.append(Que(a2, max_time, 1))
@@ -109,7 +107,7 @@ class GameBoard:
             self.norm_roads.append(self.rest[i])
         for i in range(len(self.entrances)):
             self.norm_roads.append(entrances_roads)
-        for i in range(len(self.entrances)):
+        for i in range(len(entrances_roads)):
             self.entrances.append([entrances_roads[i], poosons[i]])
         
        
@@ -130,6 +128,7 @@ class GameBoard:
         commute = 0
         if exit_road[last_idx] is not None:
             #calulate commute
+            #print(exit_road)
             commute = time - exit_road[last_idx].get_spawn_time()
             exit_road[last_idx] = None
         return [exit_road, commute]
@@ -154,10 +153,10 @@ class GameBoard:
         return road
 
     def _road_packed(self, road):
-        if road[0] is None:
+        try:
+            return road[0] is not None
+        except (TypeError, IndexError):
             return False
-        else:
-            return True
 
     #This can probably be crazy performance improved
     def _move_intersections(self, intersect, accepted, exits, entrances):
@@ -166,7 +165,7 @@ class GameBoard:
             #removes car from entrance roads
             for entrance in entrances:
                 if coar in entrances:
-                    entrance[len(entrance-1)] = None
+                    entrance[len(entrance)-1] = None
             #Finds the road its going to and checks with intersection to see where it needs to go
             road_to = coar.get_road_to()
             for i in range(len(exit_goes)):
@@ -198,12 +197,17 @@ class GameBoard:
             road = self.move_cars(road)
 
         #for every intersection; gets list of cars that can move, moves those cars to the next array
-        for intersect, exits, enters in range(self.intersections): #This checks what can move and moves them
-            north, east, south, west = self.road_packed(exits[0]), self.road_packed(exits[1]), self.road_packed(exits[2]), self.road_packed(exits[3])
+        for intersect, exits, enters in self.intersections: #This checks what can move and moves them
+            north, east, south, west = self._road_packed(exits[0]), self._road_packed(exits[1]), self._road_packed(exits[2]), self._road_packed(exits[3])
             #may need to change cars to get the road currently on?
             coars = []
             for road in enters:
-                coars.append(road[len(road)-1])
+                try:
+                    fin = road[len(road)-1]
+                    if fin is not None:
+                        coars.append(road[len(road)-1])
+                except (TypeError, IndexError):
+                    pass
             if isinstance(intersect, Intersection.stop_light):
                 accepted = intersect.give_permission(coars, [north, east, south, west], time)
             else:
@@ -216,6 +220,7 @@ class GameBoard:
 
         #Make new cars and increment timer on queues for new cars
         for entrance_road, queue in self.entrances: #This makes new cars 
+            #print("Anything")
             coar = queue.collect(time)
             if(coar != None):
                 if self._road_packed(entrance_road):

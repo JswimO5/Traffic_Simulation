@@ -2,7 +2,7 @@ from gameboard import GameBoard
 
 def main():
     time = 0
-    hour = 3600
+    hour = 2600
     board = GameBoard(hour)
     sum = 0
     num_cars = 0
