@@ -34,9 +34,9 @@ class Que:
 
         while(current_time<max_time):
             r = numpy.random.random() #could be random.random()
-            time = neg_sec*numpy.log(r)
+            time = round(neg_sec*numpy.log(r))
             current_time += time
-            #print(time, road_from)
+            # print(time, road_from)
             self.queue.append(time)
 
     def car_increment(self, car):
@@ -56,9 +56,9 @@ class Que:
         full = False
         if self.car_queue:
             full = True
-        #print (self.timer)
+        # print ("timer =", self.timer, self.road_from)
         if self.timer <= 0:
-            #print("less than 0 ", self.road_from)
+            # print("less than 0 ", self.road_from)
             if self.queue:
                 self.timer = self.queue.popleft()
                 self.timer = self.timer-1

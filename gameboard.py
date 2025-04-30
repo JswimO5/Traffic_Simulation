@@ -69,10 +69,10 @@ class GameBoard:
         #make the intersections and gets em together
         beaty_main = Intersection.intersection([[2], None, [3,4], [1]], [False, False, False, True])
         #needs be changed to add sloan
-        beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1]], [8,  [7, 0]], [8, [3, 0]]])
-        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0]], [21, [4, 0]], [8, [3, 4]]])
+        beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1], [3,0], [1,0]], [8,  [7, 0]], [8, [3, 0]]])
+        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3], [2, 3]], [21, [3, 0], [3,2]], [8, [2, 3]]])
         #need left turning
-        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2]], [16, [1, 0], [1, 2],], [8, [0,1], [0,2]]])
+        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[76, [2,0], [0,2], [0,1], [2, 1]], [16, [1, 0], [1, 2],], [8, [0,1], [0,2]]])
         #This one was kinda confusing, up in the air how we model tbh
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
         main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[45, [0,2], [2,0]], [20, [7, 0]]])
@@ -84,7 +84,7 @@ class GameBoard:
         #Create the queue and poissons for each entrance
         #Create Poissons for each entrance, include timer, Poission info, and queue of cars
         #Need arrival times here
-        a1, a2, a3, a4 = .01,.01,.01,.01
+        a1, a2, a3, a4 = .1,.1,.1,.1
         poosons = []
         poosons.append(Que(a1, max_time, 2))
         poosons.append(Que(a2, max_time, 1))
@@ -105,8 +105,8 @@ class GameBoard:
             self.intersections.append([norm_intersections[i], int_roaders[i][0], int_roaders[i][1]]) #This should have a list of an intesection @0 and roads coming out (NESW) @1 roads going in (NESW)
         for i in range(len(self.rest)):
             self.norm_roads.append(self.rest[i])
-        for i in range(len(self.entrances)):
-            self.norm_roads.append(entrances_roads)
+        for i in range(len(entrances_roads)):
+            self.norm_roads.append(entrances_roads[i])
         for i in range(len(entrances_roads)):
             self.entrances.append([entrances_roads[i], poosons[i]])
         
@@ -146,7 +146,7 @@ class GameBoard:
         for i in range(len(road)-2, -1, -1):
             if road[i] is not None:
                 if road[i+1] is not None:
-                    break #Check to see if this breaks correctly
+                    continue #Check to see if this breaks correctly
                 else:
                     road[i+1] = road[i]
                     road[i] = None
@@ -160,7 +160,10 @@ class GameBoard:
 
     #This can probably be crazy performance improved
     def _move_intersections(self, intersect, accepted, exits, entrances):
-        exit_goes = intersect.get_exits()   
+        if len(accepted) > 0:
+            print(accepted)
+            print(accepted[0].get_road_from())
+        exit_goes = intersect.get_exits() 
         for coar in accepted:
             #removes car from entrance roads
             for entrance in entrances:
@@ -169,8 +172,9 @@ class GameBoard:
             #Finds the road its going to and checks with intersection to see where it needs to go
             road_to = coar.get_road_to()
             for i in range(len(exit_goes)):
-                if road_to in exit_goes[i]:
-                    exits[i][0] = coar
+                if exit_goes[i] is not None:
+                    if road_to in exit_goes[i]:
+                        exits[i][0] = coar
 
 
 
@@ -189,12 +193,12 @@ class GameBoard:
         - an array of the commute times for the cars exiting on that cycle
         """
         commutes = []
-        for road in self.exits: #This gets rid of cars at exits and moves exit roads forward
-            data = self.get_rid(road, time)
-            road = data[0]
+        for i in range(len(self.exits)): #This gets rid of cars at exits and moves exit roads forward
+            data = self.get_rid(self.exits[i], time)
+            self.exits[i] = data[0]
             if data[1] != 0:
                 commutes.append(data[1])
-            road = self.move_cars(road)
+            self.exits[i] = self.move_cars(self.exits[i])
 
         #for every intersection; gets list of cars that can move, moves those cars to the next array
         for intersect, exits, enters in self.intersections: #This checks what can move and moves them
@@ -215,8 +219,8 @@ class GameBoard:
             self._move_intersections(intersect, accepted, exits, enters)
 
         #This moves cars in normal roads and then entrances
-        for road in self.norm_roads: 
-            road = self.move_cars(road)
+        for i in range(len(self.norm_roads)): 
+            self.norm_roads[i] = self.move_cars(self.norm_roads[i])
 
         #Make new cars and increment timer on queues for new cars
         for entrance_road, queue in self.entrances: #This makes new cars 
