@@ -207,6 +207,7 @@ class GameBoard:
                 commutes.append(data[1])
             self.exits[i] = self.move_cars(self.exits[i])
 
+
         #for every intersection; gets list of cars that can move, moves those cars to the next array
         for i in range(len(self.intersections)): #This checks what can move and moves them
             north, east, south, west = self._road_packed(self.intersections[i][1][0]), self._road_packed(self.intersections[i][1][1]), self._road_packed(self.intersections[i][1][2]), self._road_packed(self.intersections[i][1][3])
@@ -215,14 +216,12 @@ class GameBoard:
             for road in self.intersections[i][2]:
                 try:
                     if road is not None and len(road) > 0:
-                        fin = road[len(road)-1]
-                        if fin is not None and fin not in coars:  # Check if car already in list
+                        fin = road[-1]
+                        if fin is not None:  
                             coars.append(fin)
                 except (TypeError, IndexError):
                     pass
-            # for car in coars:
-            #     if time <80:
-            #         print(f"Car from {car.get_road_from()} to {car.get_road_to()}")
+
 
             if isinstance(self.intersections[i][0], Intersection.stop_light):
                 accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west], time)
