@@ -12,8 +12,8 @@ def main():
             for i in range(len(commutes)):
                 sum += commutes[i]
                 num_cars += 1
-        # if time%100 == 0:
-        #     board.print_all()
+        if time%100 == 0:
+            board.print_all()
         time += 1
     average_commute = sum/num_cars
     print("The average commute time is " + average_commute + "\n")
