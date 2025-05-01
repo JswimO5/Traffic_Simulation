@@ -173,7 +173,7 @@ class GameBoard:
                 #     print("car none")
                 # if entrance is None:
                 #     print("entrance none")
-                if coar in entrance:
+                if entrance is not None and coar in entrance:
                     entrance[len(entrance)-1] = None
                     break
             #Finds the road its going to and checks with intersection to see where it needs to go

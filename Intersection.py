@@ -78,7 +78,6 @@ class intersection:
         - roads_leaving follows the same [N,E,S,W] as the stop_signs list.
         """
         #seperates the cars at the light into different priority groups
-
         no_stop_signs = []
         right_of_way = []
         last_priority = []
@@ -138,10 +137,9 @@ class stop_light(intersection):
         right_turns = []
         accepted = []
         #figures out where in the light cycle you are
-        time_in_cycle = time % (self.stop_lights[len(self.stop_lights)-1][0])
+        time_in_cycle = time % (self.stop_lights[-1][0])
         for i in range(len(self.stop_lights)):
-            if time_in_cycle >= self.stop_lights[i][0]:
-                i -= 1
+            if time_in_cycle < self.stop_lights[i][0]:
                 break
         cycle = self.stop_lights[i]
         #adds cars to respective priority
