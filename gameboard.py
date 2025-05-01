@@ -143,6 +143,9 @@ class GameBoard:
         Returns:
         - numpy array: The updated road with moved cars.
         """
+
+        
+
         for i in range(len(road)-2, -1, -1):
             if road[i] is not None:
                 if road[i+1] is not None:
@@ -153,6 +156,7 @@ class GameBoard:
         return road
 
     def _road_packed(self, road):
+
         try:
             return road[0] is not None
         except (TypeError, IndexError):
@@ -165,8 +169,13 @@ class GameBoard:
         for coar in accepted:
             #removes car from entrance roads
             for entrance in entrances:
-                if coar in entrances:
+                # if coar is None:
+                #     print("car none")
+                # if entrance is None:
+                #     print("entrance none")
+                if coar in entrance:
                     entrance[len(entrance)-1] = None
+                    break
             #Finds the road its going to and checks with intersection to see where it needs to go
             road_to = coar.get_road_to()
             for i in range(len(exit_goes)):
@@ -199,22 +208,27 @@ class GameBoard:
             self.exits[i] = self.move_cars(self.exits[i])
 
         #for every intersection; gets list of cars that can move, moves those cars to the next array
-        for intersect, exits, enters in self.intersections: #This checks what can move and moves them
-            north, east, south, west = self._road_packed(exits[0]), self._road_packed(exits[1]), self._road_packed(exits[2]), self._road_packed(exits[3])
+        for i in range(len(self.intersections)): #This checks what can move and moves them
+            north, east, south, west = self._road_packed(self.intersections[i][1][0]), self._road_packed(self.intersections[i][1][1]), self._road_packed(self.intersections[i][1][2]), self._road_packed(self.intersections[i][1][3])
             #may need to change cars to get the road currently on?
             coars = []
-            for road in enters:
+            for road in self.intersections[i][2]:
                 try:
-                    fin = road[len(road)-1]
-                    if fin is not None:
-                        coars.append(road[len(road)-1])
+                    if road is not None and len(road) > 0:
+                        fin = road[len(road)-1]
+                        if fin is not None and fin not in coars:  # Check if car already in list
+                            coars.append(fin)
                 except (TypeError, IndexError):
                     pass
-            if isinstance(intersect, Intersection.stop_light):
-                accepted = intersect.give_permission(coars, [north, east, south, west], time)
+            # for car in coars:
+            #     if time <80:
+            #         print(f"Car from {car.get_road_from()} to {car.get_road_to()}")
+
+            if isinstance(self.intersections[i][0], Intersection.stop_light):
+                accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west], time)
             else:
-                accepted = intersect.give_permission(coars, [north, east, south, west])
-            self._move_intersections(intersect, accepted, exits, enters)
+                accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west])
+            self._move_intersections(self.intersections[i][0], accepted, self.intersections[i][1], self.intersections[i][2])
 
         #This moves cars in normal roads and then entrances
         for i in range(len(self.norm_roads)): 
