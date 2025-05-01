@@ -1,9 +1,7 @@
 from car import Car
 
 class intersection:
-    exit_locations = None
-    stop_signs = None
-    last_cycle = None
+    
     def __init__(self, exits, stop_signs):
         """
         Initializes the intersection with a list of roads.

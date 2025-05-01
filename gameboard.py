@@ -160,9 +160,7 @@ class GameBoard:
 
     #This can probably be crazy performance improved
     def _move_intersections(self, intersect, accepted, exits, entrances):
-        if len(accepted) > 0:
-            print(accepted)
-            print(accepted[0].get_road_from())
+        
         exit_goes = intersect.get_exits() 
         for coar in accepted:
             #removes car from entrance roads

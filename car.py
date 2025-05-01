@@ -41,9 +41,6 @@ class Car:
 
     #These are enums, can explain later if you want. Could be super helpful in other situations
     #They are mostly used to make the code readable and avoid stupid bugs 
-    roadFrom = None
-    roadTo = None
-    spawn = None
 
     def __init__(self, roadFrom, time):
         """
@@ -53,10 +50,12 @@ class Car:
         - roadFrom (entrance): The origin road where the car starts its journey.
         - time: The current time in the simulation when the car is being spawned.
         """
+        self.roadTo = None
         self.roadFrom = entrance(roadFrom)
         self.spawn = time
         
         while self.roadTo is None or self.roadTo == self.roadFrom:
+            
             rand = random.randint(1, self.total)
             if rand <= self.GRIFFITH_TO_HIGHWAY:
                 self.roadTo = entrance.griffith
