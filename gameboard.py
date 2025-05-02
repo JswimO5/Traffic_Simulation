@@ -69,13 +69,13 @@ class GameBoard:
         #make the intersections and gets em together
         beaty_main = Intersection.intersection([[2], None, [3,4], [1]], [False, False, False, True])
         #needs be changed to add sloan
-        beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1], [3,0], [1,0]], [8,  [7, 0]], [8, [3, 0]]])
-        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3], [2, 3]], [21, [3, 0], [3,2]], [8, [2, 3]]])
+        beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1]], [56,  [0, 3]], [64, [3, 0]]])
+        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3], [2, 3]], [67, [3, 0], [3,2]], [75, [2, 3]]])
         #need left turning
-        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[76, [2,0], [0,2], [0,1], [2, 1]], [16, [1, 0], [1, 2]], [8, [0,1], [0,2]]])
+        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[76, [2,0], [0,2], [0,1], [2, 1]], [92, [1, 0], [1, 2]], [112, [0,1], [0,2]]])
         #This one was kinda confusing, up in the air how we model tbh
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
-        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[45, [0,2], [2,0]], [20, [7, 0]]])
+        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[60, [0,2], [2,0]], [78, [7, 0]]])
         #Add intesection here for potts (currently stopsign)
         #This can be changed to make cars go more efficiently or whatver
         norm_intersections = [beaty_main, beaty_griffith, griffith_main, concord_main, main_main] 
