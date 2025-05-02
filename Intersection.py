@@ -136,13 +136,14 @@ class stop_light(intersection):
         - time: the current time being kept track of by the game board
         """
         right_turns = []
+        flashing_left = []
         accepted = []
         #figures out where in the light cycle you are
         time_in_cycle = time % (self.stop_lights[-1][0])
         for i in range(len(self.stop_lights)):
             if time_in_cycle < self.stop_lights[i][0]:
                 break
-        cycle = self.stop_lights[i]
+        cycle = self.stop_lights[i] 
         #adds cars to respective priority
         for car in cars:
             entrance = self._find_direction(car.get_road_from())
@@ -159,7 +160,80 @@ class stop_light(intersection):
             if added == False:
                 if entrance == ((exit+1) % 4):
                     right_turns.append(car)
+                #check if there should be a flashing yellow
+                elif abs(cycle[1][0]-cycle[1][1]) == 2 and abs(cycle[2][0]-cycle[2][1]) == 2:
+                    if entrance == cycle[1][0] or entrance == cycle[1][0]:
+                        flashing_left.append(car)
         #adds all cars trying to turn right that can
         if len(right_turns) > 0:
             accepted = self._permission_help(right_turns, accepted, roads_leaving)
+        if len(flashing_left) > 0:
+            accepted = self._permission_help(flashing_left, accepted, roads_leaving)
         return accepted
+    
+class round_about(intersection):
+    def __init__(self, exits):
+        """
+        Initializes the intersection with a list of roads.
+        Parameters:
+        - exits (list): A nested list of size 4 where exits are put in their repspective directions.
+        - directions are: 0 is North, 1 is East, 2 is South, and 3 is West.
+        - round_space: an array that holds the road segments for being in a round about
+        """
+        super().__init__(exits, [False]*4)  # Assume no stop signs;
+        self.round_space = [None, None, None, None]
+
+    def _permission_help(self, car):
+        """
+        Determines if a car can enter the round about
+        Parameters:
+        - car: The car being checked if it can enter
+        Returns:
+        - A boolean that represents if the car entered the round about
+        """
+        entrance = self._find_direction(car.get_road_from)
+        if self.round_space[entrance] == None:
+            if self.round_space[(entrance + 1) % 4] == None:
+                self.round_space[entrance] = car
+                return True
+        return False
+    
+    def _can_exit(self, roads_leaving):
+        """
+        Checks if any of the cars in the round about can leave
+        Parameters:
+        - roads_leaving (list): True or false if the road leaving the intersection is backed up.
+        Returns:
+        - exited: The list of cars that exited the round about
+        """
+        exited = []
+        for i in range(4):
+            if self.round_space != None:
+                if i == self._find_direction(self.round_space[i].get_road_to):
+                    if roads_leaving[i] == False:
+                        exited.append(self.round_space[i])
+                        self.round_space[i] = None
+        return exited
+
+
+    def give_permission(self, cars, roads_leaving):
+        """
+        Gives permission to the car to exit the intersection.
+        
+        Parameters:
+        - cars (list): A list of cars that are waiting to cross the intersection.
+        - roads_leaving (list): True or false if the road leaving the intersection is backed up.
+        - roads_leaving follows the format [N,E,S,W].
+        """
+        cars_entering = []
+        cars_leaving = []
+        temp = [None,None,None,None]
+        for i in range(4):
+            temp[(i+1)%4] = self.round_space[i]
+        self.round_space = temp
+        cars_leaving = self._can_exit()
+        for car in cars:
+            result = self._permission_help(car)
+            if result == True:
+                cars_entering.append(car)
+        return [cars_entering, cars_leaving]

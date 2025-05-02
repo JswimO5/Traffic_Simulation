@@ -70,9 +70,9 @@ class GameBoard:
         beaty_main = Intersection.intersection([[2], None, [3,4], [1]], [False, False, False, True])
         #needs be changed to add sloan
         beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1]], [56,  [0, 3]], [64, [3, 0]]])
-        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3], [2, 3]], [67, [3, 0], [3,2]], [75, [2, 3]]])
+        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3]], [67, [3, 0], [3,2]], [75, [2, 3]]])
         #need left turning
-        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2], [0,1], [2, 1]], [71, [1, 0], [1, 2]], [91, [0,1], [0,2]]])
+        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2], [2, 1]], [71, [1, 0], [1, 2]], [91, [0,1], [0,2]]])
         #This one was kinda confusing, up in the air how we model tbh
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
         main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[60, [0,2], [2,0]], [78, [7, 0]]])
