@@ -58,8 +58,8 @@ class GameBoard:
         main_south_south = [None] *293
 
         #Groups the roads based on exit, entrance, and rest
-        entrances_roads = [main_north_south, griff_west_west, concord_east, main_south_north]
-        self.exits = [main_north_north, griff_west_east, concord_west, main_south_south]
+        entrances_roads = [main_north_south, griff_west_east, concord_west, main_south_north]
+        self.exits = [main_north_north, griff_west_west, concord_east, main_south_south]
         #Needs to be made so that they are in a good and fun order
         self.rest = [beat_north, beat_south, main_griff_beat_north, main_griff_beat_south,
                  griff_beat_main_east, griff_beat_main_west, main_griff_concord_north, 
@@ -164,7 +164,8 @@ class GameBoard:
 
     #This can probably be crazy performance improved
     def _move_intersections(self, intersect, accepted, exits, entrances):
-        
+        # if accepted[0].get_road_from() != 2 and accepted[0].get_road_from() != 3:
+        #     print(accepted[0].get_road_from())
         exit_goes = intersect.get_exits() 
         for coar in accepted:
             #removes car from entrance roads
@@ -211,6 +212,8 @@ class GameBoard:
         #for every intersection; gets list of cars that can move, moves those cars to the next array
         for i in range(len(self.intersections)): #This checks what can move and moves them
             north, east, south, west = self._road_packed(self.intersections[i][1][0]), self._road_packed(self.intersections[i][1][1]), self._road_packed(self.intersections[i][1][2]), self._road_packed(self.intersections[i][1][3])
+            # if i == 3:
+            #     print(east)
             #may need to change cars to get the road currently on?
             coars = []
             for road in self.intersections[i][2]:
@@ -224,10 +227,13 @@ class GameBoard:
 
 
             if isinstance(self.intersections[i][0], Intersection.stop_light):
+                # if i ==3:
+                #     print(coars)
                 accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west], time)
             else:
                 accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west])
-            self._move_intersections(self.intersections[i][0], accepted, self.intersections[i][1], self.intersections[i][2])
+            if len(accepted) > 0:
+                self._move_intersections(self.intersections[i][0], accepted, self.intersections[i][1], self.intersections[i][2])
 
         #This moves cars in normal roads and then entrances
         for i in range(len(self.norm_roads)): 
