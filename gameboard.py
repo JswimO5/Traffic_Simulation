@@ -84,25 +84,25 @@ class GameBoard:
         #Create the queue and poissons for each entrance
         #Create Poissons for each entrance, include timer, Poission info, and queue of cars
         #Need arrival times here
-        a1, a2, a3, a4 = .1,.1,.1,.1
+        a1, a2, a3, a4 = 1,1,1,1
         poosons = []
         poosons.append(Que(a1, max_time, 2))
         poosons.append(Que(a2, max_time, 1))
         poosons.append(Que(a3, max_time, 4))
         poosons.append(Que(a4, max_time, 3))
         
-        #groups the roads based on intersections 
-        bm_int_info = [[main_north_north, None, main_griff_beat_south, beat_south],[main_north_south, None, main_griff_beat_north, beat_north]]
-        bg_int_info = [[beat_north, griff_beat_main_east, None, griff_west_west],[beat_south, griff_beat_main_west, None, griff_west_east]]
-        gm_int_info = [[main_griff_beat_north, None, main_griff_concord_south, griff_beat_main_west],[main_griff_beat_south, None, main_griff_concord_north, griff_beat_main_east]]
-        mc_int_info = [[main_griff_concord_north, concord_east, main_concord_blake_south, None],[main_griff_concord_south, concord_west, main_concord_blake_north, None]]
-        mm_int_info = [[main_concord_blake_north, None, main_south_south, None],[main_concord_blake_south, None, main_south_north, None]]
+        #groups the roads based on intersections #third index is left turn lanes at {N,E,S,W}
+        bm_int_info = [[main_north_north, None, main_griff_beat_south, beat_south],[main_north_south, None, main_griff_beat_north, beat_north], [False, False, False, False]]
+        bg_int_info = [[beat_north, griff_beat_main_east, None, griff_west_west],[beat_south, griff_beat_main_west, None, griff_west_east], [False, True, False, True]]
+        gm_int_info = [[main_griff_beat_north, None, main_griff_concord_south, griff_beat_main_west],[main_griff_beat_south, None, main_griff_concord_north, griff_beat_main_east], [False, True, True, False]]
+        mc_int_info = [[main_griff_concord_north, concord_east, main_concord_blake_south, None],[main_griff_concord_south, concord_west, main_concord_blake_north, None], [False, True, False, True]]
+        mm_int_info = [[main_concord_blake_north, None, main_south_south, None],[main_concord_blake_south, None, main_south_north, None], [False, False, False, False]]
         int_roaders = [bm_int_info, bg_int_info, gm_int_info, mc_int_info, mm_int_info]
 
 
         #Makes lists needed for turn incrementing
         for i in range(len(norm_intersections)):
-            self.intersections.append([norm_intersections[i], int_roaders[i][0], int_roaders[i][1]]) #This should have a list of an intesection @0 and roads coming out (NESW) @1 roads going in (NESW)
+            self.intersections.append([norm_intersections[i], int_roaders[i][0], int_roaders[i][1], int_roaders[i][2]]) #This should have a list of an intesection @0 and roads coming out (NESW) @1 roads going in (NESW)
         for i in range(len(self.rest)):
             self.norm_roads.append(self.rest[i])
         for i in range(len(entrances_roads)):
@@ -170,13 +170,11 @@ class GameBoard:
         for coar in accepted:
             #removes car from entrance roads
             for entrance in entrances:
-                # if coar is None:
-                #     print("car none")
-                # if entrance is None:
-                #     print("entrance none")
                 if entrance is not None and coar in entrance:
-                    entrance[len(entrance)-1] = None
-                    break
+                    for i in range(len(entrance)):
+                        if entrance[i] is not None and entrance[i]== coar:
+                            entrance[i] = None
+                            break
             #Finds the road its going to and checks with intersection to see where it needs to go
             road_to = coar.get_road_to()
             for i in range(len(exit_goes)):
@@ -184,6 +182,53 @@ class GameBoard:
                     if road_to in exit_goes[i]:
                         exits[i][0] = coar
 
+    #Ripped this from chatgpt
+    def _get_turn_direction(self, entrance_idx, exit_idx):
+        """
+        Determines if a car is turning left, right, or going straight based on entrance and exit indices.
+        
+        Parameters:
+        - entrance_idx: Index representing entrance direction (0=N, 1=E, 2=S, 3=W)
+        - exit_idx: Index representing exit direction (0=N, 1=E, 2=S, 3=W)
+        
+        Returns:
+        - int: right lane returns with a 1, left with a 2
+        """
+        if entrance_idx < 0 or exit_idx < 0:
+            return None
+            
+        # Calculate turn direction using modulo arithmetic
+        # Subtract 1 for left turn, add 1 for right turn (mod 4)
+        diff = (exit_idx - entrance_idx) % 4
+        
+        if diff == 0:
+            return 1
+        elif diff == 1:
+            return 1
+        elif diff == 3:
+            return 2
+
+
+    def _le_turners(self, intersection, j, car):
+        exit_goes = intersection[0].get_exits()
+        roader = car.get_road_to()
+        index = -1
+        for i in range(len(exit_goes)):
+            if roader in exit_goes[i]:
+                index = i
+                break    
+        for i in range(1, 5):
+            try:
+                roader_cool = intersection[2][j][-(i+1)].get_road_to()
+            except(AttributeError):
+                continue
+            for k in range(len(exit_goes)):
+                if roader_cool in exit_goes[k]:
+                    index2 = k
+                    break    
+            if self._get_turn_direction(j, index) != self._get_turn_direction(j, index2):
+                return intersection[2][j][-(i+1)]
+        return None
 
 
 
@@ -216,12 +261,16 @@ class GameBoard:
             #     print(east)
             #may need to change cars to get the road currently on?
             coars = []
-            for road in self.intersections[i][2]:
+            for j in range(len(self.intersections[i][2])):
                 try:
-                    if road is not None and len(road) > 0:
-                        fin = road[-1]
+                    if self.intersections[i][2][j] is not None and len(self.intersections[i][2][j]) > 0:
+                        fin = self.intersections[i][2][j][-1]
                         if fin is not None:  
                             coars.append(fin)
+                            if self.intersections[i][3][j] and self.intersections[i][2][j][-2] is not None:
+                                more_car = self._le_turners(self.intersections[i], j, fin)
+                                if more_car is not None:
+                                    coars.append(more_car)
                 except (TypeError, IndexError):
                     pass
             if isinstance(self.intersections[i][0], Intersection.stop_light):
