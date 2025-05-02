@@ -7,6 +7,8 @@ def main():
     sum = 0
     num_cars = 0
     while time < hour:
+        if(time == 580):
+            x=0
         commutes = board.time_seg(time)
         if(len(commutes)>0):
             for i in range(len(commutes)):

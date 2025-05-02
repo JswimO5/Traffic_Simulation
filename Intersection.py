@@ -78,6 +78,7 @@ class intersection:
         - roads_leaving follows the same [N,E,S,W] as the stop_signs list.
         """
         #seperates the cars at the light into different priority groups
+
         no_stop_signs = []
         right_of_way = []
         last_priority = []

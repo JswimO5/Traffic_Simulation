@@ -72,7 +72,7 @@ class GameBoard:
         beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1], [3,0], [1,0]], [8,  [7, 0]], [8, [3, 0]]])
         griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3], [2, 3]], [21, [3, 0], [3,2]], [8, [2, 3]]])
         #need left turning
-        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[76, [2,0], [0,2], [0,1], [2, 1]], [16, [1, 0], [1, 2],], [8, [0,1], [0,2]]])
+        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[76, [2,0], [0,2], [0,1], [2, 1]], [16, [1, 0], [1, 2]], [8, [0,1], [0,2]]])
         #This one was kinda confusing, up in the air how we model tbh
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
         main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[45, [0,2], [2,0]], [20, [7, 0]]])
@@ -224,11 +224,7 @@ class GameBoard:
                             coars.append(fin)
                 except (TypeError, IndexError):
                     pass
-
-
             if isinstance(self.intersections[i][0], Intersection.stop_light):
-                # if i ==3:
-                #     print(coars)
                 accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west], time)
             else:
                 accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west])
