@@ -5,7 +5,7 @@ from car import Car
 from poisson import Que
 import Intersection
 
-class GameBoard:
+class GameBoard2:
     """
     Represents the main simulation board containing all roads, entrances, exits, 
     and the core logic for simulating traffic over time.
@@ -54,8 +54,12 @@ class GameBoard:
         concord_west = [None] *50
         main_concord_blake_north= [None] *25
         main_concord_blake_south= [None] *25
-        main_south_north = [None] *293 #Will need to be changed to add potts intersection
-        main_south_south = [None] *293
+        main_south_north = [None] *117 #Will need to be changed to add potts intersection
+        main_south_south = [None] *117
+        spots_north = [None] * 224
+        spots_south = [None] * 224
+        main_potts_blake_north = [None] * 176
+        main_potts_blake_south = [None] * 176
 
         #Groups the roads based on exit, entrance, and rest
         entrances_roads = [main_north_south, griff_west_east, concord_west, main_south_north]
@@ -63,13 +67,14 @@ class GameBoard:
         #Needs to be made so that they are in a good and fun order
         self.rest = [beat_north, beat_south, main_griff_beat_north, main_griff_beat_south,
                  griff_beat_main_east, griff_beat_main_west, main_griff_concord_north, 
-                 main_griff_concord_south, main_concord_blake_north, main_concord_blake_south]
+                 main_griff_concord_south, main_concord_blake_north, main_concord_blake_south,
+                 spots_north, spots_south, main_potts_blake_north, main_potts_blake_south]
         
        
         #make the intersections and gets em together
         beaty_main = Intersection.intersection([[2], None, [3,4], [1]], [False, False, False, True])
-        #needs be changed to add sloan
-        beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1]], [56,  [0, 3]], [64, [3, 0]]])
+        #beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1]], [56,  [0, 3]], [64, [3, 0]]])
+        beaty_griffith = Intersection.round_about([[2], [4], [3], [1]])
         griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3]], [67, [3, 0], [3,2]], [75, [2, 3]], [78, [9,0]]])
         #need left turning
         concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2], [2, 1]], [71, [1, 0], [1, 2]], [91, [0,1], [0,2]], [95, [7,0]]])
@@ -77,8 +82,9 @@ class GameBoard:
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
         main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[60, [0,2], [2,0]], [78, [7, 0]]])
         #Add intesection here for potts (currently stopsign)
+        potts_main = Intersection.round_about([[2, 4], None, [3], [1]])
         #This can be changed to make cars go more efficiently or whatver
-        norm_intersections = [beaty_main, beaty_griffith, griffith_main, concord_main, main_main] 
+        norm_intersections = [beaty_main, beaty_griffith, griffith_main, concord_main, main_main, potts_main] 
 
 
         #Create the queue and poissons for each entrance
@@ -93,11 +99,12 @@ class GameBoard:
         
         #groups the roads based on intersections #third index is left turn lanes at {N,E,S,W}
         bm_int_info = [[main_north_north, None, main_griff_beat_south, beat_south],[main_north_south, None, main_griff_beat_north, beat_north], [False, False, False, False]]
-        bg_int_info = [[beat_north, griff_beat_main_east, None, griff_west_west],[beat_south, griff_beat_main_west, None, griff_west_east], [False, True, False, True]]
+        bg_int_info = [[beat_north, griff_beat_main_east, spots_south, griff_west_west],[beat_south, griff_beat_main_west, spots_north, griff_west_east], [False, False, False, False]]
         gm_int_info = [[main_griff_beat_north, None, main_griff_concord_south, griff_beat_main_west],[main_griff_beat_south, None, main_griff_concord_north, griff_beat_main_east], [False, True, True, False]]
         mc_int_info = [[main_griff_concord_north, concord_east, main_concord_blake_south, None],[main_griff_concord_south, concord_west, main_concord_blake_north, None], [False, True, False, True]]
-        mm_int_info = [[main_concord_blake_north, None, main_south_south, None],[main_concord_blake_south, None, main_south_north, None], [False, False, False, False]]
-        int_roaders = [bm_int_info, bg_int_info, gm_int_info, mc_int_info, mm_int_info]
+        mm_int_info = [[main_concord_blake_north, None, main_potts_blake_south, None],[main_concord_blake_south, None, main_potts_blake_north, None], [False, False, False, False]]
+        mp_int_info = [[main_potts_blake_north, None, main_south_south, spots_north],[main_potts_blake_south, None, main_south_north, spots_south],[False, False, False, False]]
+        int_roaders = [bm_int_info, bg_int_info, gm_int_info, mc_int_info, mm_int_info, mp_int_info]
 
 
         #Makes lists needed for turn incrementing
@@ -142,9 +149,7 @@ class GameBoard:
 
         Returns:
         - numpy array: The updated road with moved cars.
-        """
-
-        
+        """  
 
         for i in range(len(road)-2, -1, -1):
             if road[i] is not None:
@@ -164,8 +169,6 @@ class GameBoard:
 
     #This can probably be crazy performance improved
     def _move_intersections(self, intersect, accepted, exits, entrances):
-        # if accepted[0].get_road_from() != 2 and accepted[0].get_road_from() != 3:
-        #     print(accepted[0].get_road_from())
         exit_goes = intersect.get_exits() 
         for coar in accepted:
             #removes car from entrance roads
@@ -230,7 +233,25 @@ class GameBoard:
                 return intersection[2][j][-(i+1)]
         return None
 
+    def _killer(self, enters, killed):
+        for coar in killed:
+            for i in range(len(enters)):
+                if enters[i]is not None and enters[i][-1]:
+                    if coar == enters[i][-1]:
+                        enters[i][-1] = None
 
+    def _adder(self, intersect, exits, adds):
+        exit_goes = intersect.get_exits()
+        roader = -1
+        for coar in adds:
+            for i in range(len(exit_goes)):
+                if exit_goes[i] is not None:
+                    if coar.get_road_to() in exit_goes[i]:
+                        roader = i
+                        break
+            if roader == -1:
+                exit("AAAAAAAAAAAAAAAAAAAAAAA")
+            exits[roader][0] = coar
 
     def time_seg(self, time):
         """
@@ -257,8 +278,6 @@ class GameBoard:
         #for every intersection; gets list of cars that can move, moves those cars to the next array
         for i in range(len(self.intersections)): #This checks what can move and moves them
             north, east, south, west = self._road_packed(self.intersections[i][1][0]), self._road_packed(self.intersections[i][1][1]), self._road_packed(self.intersections[i][1][2]), self._road_packed(self.intersections[i][1][3])
-            # if i == 3:
-            #     print(east)
             #may need to change cars to get the road currently on?
             coars = []
             for j in range(len(self.intersections[i][2])):
@@ -267,7 +286,7 @@ class GameBoard:
                         fin = self.intersections[i][2][j][-1]
                         if fin is not None:  
                             coars.append(fin)
-                            if self.intersections[i][3][j] and self.intersections[i][2][j][-2] is not None:
+                            if self.intersections[i][3][j] and self.intersections[i][2][j][-2] is not None and isinstance(self.intersections[i][0], Intersection.stop_light):
                                 more_car = self._le_turners(self.intersections[i], j, fin)
                                 if more_car is not None:
                                     coars.append(more_car)
@@ -277,8 +296,12 @@ class GameBoard:
                 accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west], time)
             else:
                 accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west])
-            if len(accepted) > 0:
-                self._move_intersections(self.intersections[i][0], accepted, self.intersections[i][1], self.intersections[i][2])
+            if isinstance(self.intersections[i][0], Intersection.round_about):
+                self._killer(self.intersections[i][2], accepted[0])
+                self._adder(self.intersections[i][0], self.intersections[i][1], accepted[1])
+            else:
+                if len(accepted) > 0:
+                    self._move_intersections(self.intersections[i][0], accepted, self.intersections[i][1], self.intersections[i][2])
 
         #This moves cars in normal roads and then entrances
         for i in range(len(self.norm_roads)): 

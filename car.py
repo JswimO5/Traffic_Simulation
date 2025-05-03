@@ -33,10 +33,10 @@ class Car:
     """
     #Annual traffic to determine probability of car exits- will be changed in later versions
     #Change could be factoring that many people want to leave at the same time (rush hour)
-    GRIFFITH_TO_HIGHWAY = 17000
+    GRIFFITH_TO_HIGHWAY = 15000
     MAIN_STREET_NORTH = 10000
     MAIN_STREET_SOUTH = 13500
-    CONCORD = 14000
+    CONCORD = 15000
     total = GRIFFITH_TO_HIGHWAY + MAIN_STREET_NORTH + MAIN_STREET_SOUTH + CONCORD
 
     #These are enums, can explain later if you want. Could be super helpful in other situations

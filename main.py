@@ -1,12 +1,13 @@
 from gameboard import GameBoard
+from gameboard_post_construction import GameBoard2
 
 def main():
     time = 0
     hour = 3600
-    board = GameBoard(hour)
+    board = GameBoard2(hour)
     sum = 0
     num_cars = 0
-    while time < hour:
+    while time < 1.5*hour:
         commutes = board.time_seg(time)
         if(len(commutes)>0):
             for i in range(len(commutes)):
