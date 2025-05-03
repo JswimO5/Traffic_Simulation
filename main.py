@@ -4,7 +4,7 @@ from gameboard_post_construction import GameBoard2
 def main():
     time = 0
     hour = 3600
-    board = GameBoard2(hour)
+    board = GameBoard2(1.5*hour)
     sum = 0
     num_cars = 0
     while time < 1.5*hour:

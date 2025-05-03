@@ -208,7 +208,7 @@ class round_about(intersection):
         """
         exited = []
         for i in range(4):
-            if self.round_space != None:
+            if self.round_space[i] != None:
                 if i == self._find_direction(self.round_space[i].get_road_to):
                     if roads_leaving[i] == False:
                         exited.append(self.round_space[i])
@@ -231,7 +231,7 @@ class round_about(intersection):
         for i in range(4):
             temp[(i+1)%4] = self.round_space[i]
         self.round_space = temp
-        cars_leaving = self._can_exit()
+        cars_leaving = self._can_exit(roads_leaving)
         for car in cars:
             result = self._permission_help(car)
             if result == True:
