@@ -54,7 +54,7 @@ class GameBoard2:
         concord_west = [None] *50
         main_concord_blake_north= [None] *25
         main_concord_blake_south= [None] *25
-        main_south_north = [None] *117 #Will need to be changed to add potts intersection
+        main_south_north = [None] *117 
         main_south_south = [None] *117
         spots_north = [None] * 224
         spots_south = [None] * 224
@@ -72,14 +72,13 @@ class GameBoard2:
         
        
         #make the intersections and gets em together
-        #Changed route to one that is probably unlikely, but both should be tested!
         beaty_main = Intersection.intersection([[2], None, [4], [1, 3]], [False, False, False, True])
         beaty_griffith = Intersection.round_about([[2], [4], [3], [1]])
-        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[94, [0, 2],[2,0], [0, 3]], [134, [3, 0], [3,2]], [150, [2, 3]], [156, [9,0]]])
+        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[94, [0, 2],[2,0], [0, 3]], [134, [3, 0], [3,2]], [150, [2, 3]]])
         concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[110, [2,0], [0,2], [2, 1]], [142, [1, 0], [1, 2]], [181, [0,1], [0,2]], [190, [7,0]]])
         #This one was kinda confusing, up in the air how we model tbh
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
-        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[120, [0,2], [2,0]], [156, [7, 0]]])
+        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[120, [0,2], [2,0]]])
         potts_main = Intersection.round_about([[4], None, [3], [1, 2]])
         #This can be changed to make cars go more efficiently or whatver
         norm_intersections = [beaty_main, beaty_griffith, griffith_main, concord_main, main_main, potts_main] 
