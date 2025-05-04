@@ -239,7 +239,8 @@ class GameBoard2:
                 if enters[i]is not None and enters[i][-1]:
                     if coar == enters[i][-1]:
                         enters[i][-1] = None
-
+        return enters
+    
     def _adder(self, intersect, exits, adds):
         exit_goes = intersect.get_exits()
         roader = -1
@@ -249,10 +250,9 @@ class GameBoard2:
                     if coar.get_road_to() in exit_goes[i]:
                         roader = i
                         break
-            if roader == -1:
-                exit("AAAAAAAAAAAAAAAAAAAAAAA")
             exits[roader][0] = coar
-
+        return exits
+    
     def time_seg(self, time):
         """
         Advances the simulation by one time segment.
@@ -297,8 +297,8 @@ class GameBoard2:
             else:
                 accepted = self.intersections[i][0].give_permission(coars, [north, east, south, west])
             if isinstance(self.intersections[i][0], Intersection.round_about):
-                self._killer(self.intersections[i][2], accepted[0])
-                self._adder(self.intersections[i][0], self.intersections[i][1], accepted[1])
+                self.intersections[i][2] = self._killer(self.intersections[i][2], accepted[0])
+                self.intersections[i][1] = self._adder(self.intersections[i][0], self.intersections[i][1], accepted[1])
             else:
                 if len(accepted) > 0:
                     self._move_intersections(self.intersections[i][0], accepted, self.intersections[i][1], self.intersections[i][2])
