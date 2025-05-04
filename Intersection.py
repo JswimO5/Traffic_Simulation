@@ -27,7 +27,7 @@ class intersection:
                     if self.exit_locations[i][j] is not None:
                         if self.exit_locations[i][j] == road:
                             return i
-        return -1 
+        exit("Does work still?")
     def _permission_help(self, cars, accepted, roads_leaving):
         """
         Adds cars that can go to the accepted array.
@@ -191,7 +191,7 @@ class round_about(intersection):
         Returns:
         - A boolean that represents if the car entered the round about
         """
-        entrance = self._find_direction(car.get_road_from)
+        entrance = self._find_direction(car.get_road_from())
         if self.round_space[entrance] == None:
             if self.round_space[(entrance + 1) % 4] == None:
                 self.round_space[entrance] = car
@@ -208,8 +208,8 @@ class round_about(intersection):
         """
         exited = []
         for i in range(4):
-            if self.round_space[i] != None:
-                if i == self._find_direction(self.round_space[i].get_road_to):
+            if self.round_space != None and self.round_space[i] is not None:
+                if i == self._find_direction(self.round_space[i].get_road_to()):
                     if roads_leaving[i] == False:
                         exited.append(self.round_space[i])
                         self.round_space[i] = None
