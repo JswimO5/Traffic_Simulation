@@ -69,13 +69,13 @@ class GameBoard:
         #make the intersections and gets em together
         beaty_main = Intersection.intersection([[2], None, [3,4], [1]], [False, False, False, True])
         #needs be changed to add sloan
-        beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1]], [56,  [0, 3]], [64, [3, 0]]])
-        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3]], [67, [3, 0], [3,2]], [75, [2, 3]], [78, [9,0]]])
+        beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[96, [1, 3], [3,1]], [112,  [0, 3]], [128, [3, 0]]])
+        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[94, [0, 2],[2,0], [0, 3]], [134, [3, 0], [3,2]], [150, [2, 3]], [156, [9,0]]])
         #need left turning
-        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2], [2, 1]], [71, [1, 0], [1, 2]], [91, [0,1], [0,2]], [95, [7,0]]])
+        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[110, [2,0], [0,2], [2, 1]], [142, [1, 0], [1, 2]], [181, [0,1], [0,2]], [190, [7,0]]])
         #This one was kinda confusing, up in the air how we model tbh
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
-        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[60, [0,2], [2,0]], [78, [7, 0]]])
+        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[120, [0,2], [2,0]], [156, [7, 0]]])
         #Add intesection here for potts (currently stopsign)
         #This can be changed to make cars go more efficiently or whatver
         norm_intersections = [beaty_main, beaty_griffith, griffith_main, concord_main, main_main] 
@@ -84,7 +84,7 @@ class GameBoard:
         #Create the queue and poissons for each entrance
         #Create Poissons for each entrance, include timer, Poission info, and queue of cars
         #Need arrival times here
-        a1, a2, a3, a4 = .1,.1,.2,.175
+        a1, a2, a3, a4 = .03561,.04928,.0925,.0825 
         poosons = []
         poosons.append(Que(a1, max_time, 2))
         poosons.append(Que(a2, max_time, 1))
