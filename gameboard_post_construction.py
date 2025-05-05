@@ -74,7 +74,7 @@ class GameBoard2:
         #make the intersections and gets em together
         beaty_main = Intersection.intersection([[2], None, [4], [1, 3]], [False, False, False, True])
         beaty_griffith = Intersection.round_about([[2], [4], [3], [1]])
-        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3]], [67, [3, 0], [3,2]], [75, [2, 3]]])
+        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3]], [67, [3, 0], [3,2]], [75, [2, 3]], [80, [7,0]]])
         concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2], [2, 1]], [71, [1, 0], [1, 2]], [90, [0,1], [0,2]], [95, [7,0]]])
         #This one was kinda confusing, up in the air how we model tbh
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
@@ -217,7 +217,7 @@ class GameBoard2:
             if roader in exit_goes[i]:
                 index = i
                 break    
-        for i in range(1, 5):
+        for i in range(1, 3):
             try:
                 roader_cool = intersection[2][j][-(i+1)].get_road_to()
             except(AttributeError):

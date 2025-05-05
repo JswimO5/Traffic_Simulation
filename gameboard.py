@@ -70,7 +70,7 @@ class GameBoard:
         beaty_main = Intersection.intersection([[2], None, [3,4], [1]], [False, False, False, True])
         #needs be changed to add sloan
         beaty_griffith = Intersection.stop_light([[2], [3,4], None, [1]], [[48, [1, 3], [3,1]], [56,  [0, 3]], [64, [3, 0]]])
-        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3]], [67, [3, 0], [3,2]], [75, [2, 3]]])
+        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3]], [67, [3, 0], [3,2]], [75, [2, 3], [90, [7,0]]]])
         #need left turning
         concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2], [2,1]], [71, [1,0], [1,2]], [90, [0,1], [0,2]], [95, [7,0]]])
         #This one was kinda confusing, up in the air how we model tbh
@@ -217,7 +217,7 @@ class GameBoard:
             if roader in exit_goes[i]:
                 index = i
                 break    
-        for i in range(1, 5):
+        for i in range(1, 3):
             try:
                 roader_cool = intersection[2][j][-(i+1)].get_road_to()
             except(AttributeError):
