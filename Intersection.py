@@ -28,7 +28,7 @@ class intersection:
                         if self.exit_locations[i][j] == road:
                             return i
         exit("Does work still?")
-    def _permission_help(self, cars, accepted, roads_leaving):
+    def _permission_help(self, cars, accepted, roads_leaving, full_permission):
         """
         Adds cars that can go to the accepted array.
         Parameters:
@@ -36,6 +36,7 @@ class intersection:
         - accepted: array of the cars that have already been accepted
         - roads_leaving: array of booleans representing if the road is fully backed up.
         """
+        partial = []
         for car in cars:
             entrance = self._find_direction(car.get_road_from())
             exit = self._find_direction(car.get_road_to())
@@ -62,8 +63,14 @@ class intersection:
                                 break
                         #right turn is garenteed based on first if statement
                 if can_add == True:
-                    accepted.append(car)
-        return accepted
+                    if full_permission == True:
+                        accepted.append(car)
+                    else:
+                        partial.append(car)
+        if full_permission == True:
+            return accepted
+        else:
+            return partial
 
     def get_exits(self):
         return self.exit_locations
@@ -96,11 +103,11 @@ class intersection:
         #Goes through the cars by priority group adding cars that don't have conflicts
         #with any previously accepted cars
         if len(no_stop_signs) > 0:
-            accepted = self._permission_help(no_stop_signs, accepted, roads_leaving)
+            accepted = self._permission_help(no_stop_signs, accepted, roads_leaving, True)
         if len(right_of_way) > 0:
-            accepted = self._permission_help(right_of_way, accepted, roads_leaving)
+            accepted = self._permission_help(right_of_way, accepted, roads_leaving, True)
         if len(last_priority) > 0:
-            accepted = self._permission_help(last_priority, accepted, roads_leaving)
+            accepted = self._permission_help(last_priority, accepted, roads_leaving, True)
         #logic to record which cars went through the intersection for future priority
         for i in range(4):
             self.last_cycle[i] = False
@@ -123,7 +130,8 @@ class stop_light(intersection):
         - times should be accumulative aka [[55...],[71...],[79...]] for concord
         """
         super().__init__(exits, [False]*4)  # Assume no stop signs;
-        self.stop_lights = stop_lights 
+        self.stop_lights = stop_lights
+        self.trying_left = [] 
 
     def give_permission(self, cars, roads_leaving, time):
         """
@@ -165,10 +173,13 @@ class stop_light(intersection):
                     if entrance == cycle[1][0] or entrance == cycle[1][1]:
                         flashing_left.append(car)
         #adds all cars trying to turn right that can
+        if len(self.trying_left) > 0:
+            accepted = self._permission_help(self.trying_left, accepted, roads_leaving, True)
+            self.trying_left = []
         if len(right_turns) > 0:
-            accepted = self._permission_help(right_turns, accepted, roads_leaving)
+            accepted = self._permission_help(right_turns, accepted, roads_leaving, True)
         if len(flashing_left) > 0:
-            accepted = self._permission_help(flashing_left, accepted, roads_leaving)
+            self.trying_left = self._permission_help(flashing_left, accepted, roads_leaving, False)
         return accepted
     
 class round_about(intersection):
