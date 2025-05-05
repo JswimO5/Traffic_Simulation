@@ -131,7 +131,7 @@ class stop_light(intersection):
         """
         super().__init__(exits, [False]*4)  # Assume no stop signs;
         self.stop_lights = stop_lights
-        self.trying_left = [] 
+        self.trying_left = [[],[]] 
 
     def give_permission(self, cars, roads_leaving, time):
         """
@@ -173,13 +173,16 @@ class stop_light(intersection):
                     if entrance == cycle[1][0] or entrance == cycle[1][1]:
                         flashing_left.append(car)
         #adds all cars trying to turn right that can
-        if len(self.trying_left) > 0:
-            accepted = self._permission_help(self.trying_left, accepted, roads_leaving, True)
-            self.trying_left = []
+        if len(self.trying_left[1]) > 0:
+            accepted = self._permission_help(self.trying_left[1], accepted, roads_leaving, True)
+            self.trying_left[1] = []
+        if len(self.trying_left[0]) > 0:
+            self.trying_left[1] = self._permission_help(self.trying_left[0], accepted, roads_leaving, False)
+            self.trying_left[0] = []
         if len(right_turns) > 0:
             accepted = self._permission_help(right_turns, accepted, roads_leaving, True)
         if len(flashing_left) > 0:
-            self.trying_left = self._permission_help(flashing_left, accepted, roads_leaving, False)
+            self.trying_left[0] = self._permission_help(flashing_left, accepted, roads_leaving, False)
         return accepted
     
 class round_about(intersection):

@@ -7,11 +7,14 @@ def main():
     board = GameBoard(1.25 * hour)
     sum = 0
     num_cars = 0
+    max = 0
     while time < 1.5*hour:
         commutes = board.time_seg(time)
         if time > 0.25 * hour:
             if(len(commutes)>0):
                 for i in range(len(commutes)):
+                    if (time - commutes[i].get_spawn_time()) > max:
+                        max = time - commutes[i].get_spawn_time()
                     sum += time - commutes[i].get_spawn_time()
                     num_cars += 1
         if time%599 == 0:
@@ -20,5 +23,6 @@ def main():
     average_commute = sum/num_cars
     print(f"The average commute time is {(average_commute/60):.2f} min\n")
     print(num_cars)
+    print(max/60)
 
 main()
