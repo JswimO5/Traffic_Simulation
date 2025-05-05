@@ -11,7 +11,7 @@ def main():
         commutes = board.time_seg(time)
         if(len(commutes)>0):
             for i in range(len(commutes)):
-                sum += commutes[i]
+                sum += time - commutes[i].get_spawn_time()
                 num_cars += 1
         if time%500 == 0:
             board.print_all()

@@ -133,7 +133,7 @@ class GameBoard2:
         if exit_road[last_idx] is not None:
             #calulate commute
             #print(exit_road)
-            commute = time - exit_road[last_idx].get_spawn_time()
+            commute = exit_road[last_idx]
             exit_road[last_idx] = None
         return [exit_road, commute]
     
