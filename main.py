@@ -7,7 +7,7 @@ def main():
     board = GameBoard(hour)
     sum = 0
     num_cars = 0
-    while time < 5*hour:
+    while time < 3*hour:
         commutes = board.time_seg(time)
         if(len(commutes)>0):
             for i in range(len(commutes)):

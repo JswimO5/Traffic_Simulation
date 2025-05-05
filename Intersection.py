@@ -162,7 +162,7 @@ class stop_light(intersection):
                     right_turns.append(car)
                 #check if there should be a flashing yellow
                 elif abs(cycle[1][0]-cycle[1][1]) == 2 and abs(cycle[2][0]-cycle[2][1]) == 2:
-                    if entrance == cycle[1][0] or entrance == cycle[1][0]:
+                    if entrance == cycle[1][0] or entrance == cycle[1][1]:
                         flashing_left.append(car)
         #adds all cars trying to turn right that can
         if len(right_turns) > 0:
