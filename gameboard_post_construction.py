@@ -74,11 +74,11 @@ class GameBoard2:
         #make the intersections and gets em together
         beaty_main = Intersection.intersection([[2], None, [4], [1, 3]], [False, False, False, True])
         beaty_griffith = Intersection.round_about([[2], [4], [3], [1]])
-        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3]], [67, [3, 0], [3,2]], [75, [2, 3]], [80, [7,0]]])
-        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2], [2, 1]], [71, [1, 0], [1, 2]], [90, [0,1], [0,2]], [95, [7,0]]])
+        griffith_main = Intersection.stop_light([[2], None, [3,4], [1]], [[47, [0, 2],[2,0], [0, 3]], [67, [3, 0], [3,2]], [75, [2, 3]], [100, [7,0]]])
+        concord_main = Intersection.stop_light([[1, 2], [4], [3], None],[[55, [2,0], [0,2], [2, 1]], [71, [1, 0], [1, 2]], [90, [0,1], [0,2]], [130, [7,0]]])
         #This one was kinda confusing, up in the air how we model tbh
         #Also I added some dead time for traffic we arent modeling, fix this if it doesnt work
-        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[60, [0,2], [2,0]], [78, [7,0]]])
+        main_main = Intersection.stop_light([[1, 2, 4], None, [3], None], [[40, [0,2], [2,0]], [75, [7,0]]])
         potts_main = Intersection.round_about([[4], None, [3], [1, 2]])
         #This can be changed to make cars go more efficiently or whatver
         norm_intersections = [beaty_main, beaty_griffith, griffith_main, concord_main, main_main, potts_main] 
@@ -87,7 +87,7 @@ class GameBoard2:
         #Create the queue and poissons for each entrance
         #Create Poissons for each entrance, include timer, Poission info, and queue of cars
         #Need arrival times here
-        a1, a2, a3, a4 = .07122,.09856,.185,.165 
+        a1, a2, a3, a4 = .07122,.09856,.185,.17 
         poosons = []
         poosons.append(Que(a1, max_time, 2))
         poosons.append(Que(a2, max_time, 1))
