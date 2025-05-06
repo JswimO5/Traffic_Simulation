@@ -84,7 +84,7 @@ class GameBoard:
         #Create the queue and poissons for each entrance
         #Create Poissons for each entrance, include timer, Poission info, and queue of cars
         #Need arrival times here
-        a1, a2, a3, a4 = .07122,.09856,.185,.17 
+        a1, a2, a3, a4 = .09856, .07122, .17, .185
         poosons = []
         poosons.append(Que(a1, max_time, 2))
         poosons.append(Que(a2, max_time, 1))
